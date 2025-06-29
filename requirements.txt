@@ -1,0 +1,7 @@
+Flask
+requests
+beautifulsoup4
+python-telegram-bot
+apscheduler
+sqlalchemy
+selenium
