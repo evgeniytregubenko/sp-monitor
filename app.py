@@ -4,9 +4,11 @@ import sqlite3
 
 app = Flask(__name__)
 
+# Создаем таблицу при запуске
+parser.init_db()
+
 @app.route("/")
 def home():
-    # Читаем записи из базы
     conn = sqlite3.connect('data.db')
     c = conn.cursor()
     c.execute("SELECT name, url, price, available, last_checked FROM products ORDER BY id DESC")
@@ -29,6 +31,5 @@ def home():
 
 @app.route("/run-parser")
 def run_parser():
-    parser.init_db()
     parser.parse_sportsdirect()
     return redirect(url_for('home'))
