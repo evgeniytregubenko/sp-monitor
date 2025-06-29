@@ -6,3 +6,5 @@ apscheduler
 sqlalchemy
 selenium
 gunicorn
+selenium
+apscheduler
