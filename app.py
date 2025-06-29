@@ -30,4 +30,5 @@ def home():
 @app.route("/run-parser")
 def run_parser():
     parser.init_db()
-    parser.parse_sportsdirect(_
+    parser.parse_sportsdirect()
+    return redirect(url_for('home'))
