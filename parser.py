@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import sqlite3
 import time
 
@@ -33,10 +35,12 @@ def parse_sportsdirect():
     # Открываем конкретный товар (пример)
     url = "https://www.sportsdirect.com/adidas-runfalcon-3-trainers-mens-121002#colcode=12100203"
     driver.get(url)
+    wait = WebDriverWait(driver, 15)
     time.sleep(5)  # ждём загрузки
 
     name = driver.find_element(By.CSS_SELECTOR, "h1").text.strip()
-    price = driver.find_element(By.CSS_SELECTOR, ".pri").text.strip()
+    price_elem = wait.until(EC.presence_of_element_located((By.ID, "lblSellingPrice")))
+    price = price_elem.text.strip()
     available = 1
 
     driver.quit()
