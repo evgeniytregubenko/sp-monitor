@@ -36,6 +36,8 @@ def parse_sportsdirect():
 
     wait = WebDriverWait(driver, 30)
 
+    driver.save_screenshot("/tmp/screen.png")  # 💥 Добавляем
+
     # Ждем заголовок
     name_elem = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "h1")))
     name = name_elem.text.strip()
