@@ -1,3 +1,7 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+import time
 import sqlite3
 
 def init_db():
@@ -17,20 +21,27 @@ def init_db():
     conn.close()
 
 def parse_sportsdirect():
-    conn = sqlite3.connect('data.db')
-    c = conn.cursor()
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
 
-    # Временные тестовые записи
-    products = [
-        {"name": "Test Product 1", "url": "https://example.com/1", "price": "£100", "available": 1},
-        {"name": "Test Product 2", "url": "https://example.com/2", "price": "£150", "available": 1},
-    ]
+    driver = webdriver.Chrome(options=options)
 
-    for p in products:
-        c.execute("INSERT INTO products (name, url, price, available) VALUES (?, ?, ?, ?)",
-                  (p["name"], p["url"], p["price"], p["available"]))
+    # Пример: парсим бренд Adidas (можно изменить на другую страницу)
+    driver.get("https://www.sportsdirect.com/adidas/all-adidas")
+    time.sleep(5)  # ждём загрузки JS
 
-    conn.commit()
-    conn.close()
+    products = []
 
-    print(f"✅ Сохранено {len(products)} тестовых записей")
+    # Ищем карточки товаров
+    items = driver.find_elements(By.CSS_SELECTOR, ".productgrid .item")
+
+    for item in items:
+        try:
+            name = item.find_element(By.CSS_SELECTOR, ".itemTitle").text.strip()
+            url = item.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
+            price = item.find_element(By.CSS_SELECTOR, ".pri").text.strip()
+            available = 1  # пока считаем все доступными
+            products.append({"name": name, "
