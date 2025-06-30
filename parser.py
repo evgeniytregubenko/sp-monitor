@@ -4,7 +4,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import sqlite3
-import time
 
 def init_db():
     conn = sqlite3.connect('data.db')
@@ -32,16 +31,20 @@ def parse_sportsdirect():
 
     driver = webdriver.Chrome(options=options)
 
-    # Открываем конкретный товар (пример)
-    url = "https://www.sportsdirect.com/adidas-runfalcon-3-trainers-mens-121002#colcode=12100203"
+    url = "https://www.sportsdirect.com/lonsdale-shorts-and-vest-set-kids-290167"
     driver.get(url)
-    wait = WebDriverWait(driver, 15)
-    time.sleep(5)  # ждём загрузки
 
-    name = driver.find_element(By.CSS_SELECTOR, "h1").text.strip()
+    wait = WebDriverWait(driver, 15)
+
+    # Название
+    name_elem = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "h1")))
+    name = name_elem.text.strip()
+
+    # Цена
     price_elem = wait.until(EC.presence_of_element_located((By.ID, "lblSellingPrice")))
     price = price_elem.text.strip()
-    available = 1
+
+    available = 1  # считаем, что доступно
 
     driver.quit()
 
@@ -54,4 +57,3 @@ def parse_sportsdirect():
     conn.close()
 
     print(f"✅ Сохранён товар: {name}, цена: {price}")
-
