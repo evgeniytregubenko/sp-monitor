@@ -1,10 +1,10 @@
-from flask import Flask, render_template_string, redirect, url_for
+from flask import Flask, render_template_string
 import parser
 import sqlite3
 
 app = Flask(__name__)
 
-# Создаем таблицу при запуске
+# Создаём таблицу при старте
 parser.init_db()
 
 @app.route("/")
@@ -17,9 +17,7 @@ def home():
 
     html = """
     <h2>✅ Приложение запущено!</h2>
-    <a href="/run-parser">
-        <button style="padding:10px 20px; font-size:16px;">Запустить парсер</button>
-    </a>
+    <p>Таблица обновляется автоматически через cron (каждые 4 часа).</p>
     <h3>Товары:</h3>
     <table border="1" cellpadding="5">
         <tr><th>Название</th><th>URL</th><th>Цена</th><th>В наличии</th><th>Последняя проверка</th></tr>
@@ -29,7 +27,7 @@ def home():
     html += "</table>"
     return render_template_string(html)
 
-@app.route("/run-parser")
-def run_parser():
+@app.route("/run-parser-cron")
+def run_parser_cron():
     parser.parse_sportsdirect()
-    return redirect(url_for('home'))
+    return "✅ Парсер запущен по cron!"
