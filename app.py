@@ -1,10 +1,9 @@
+import threading
 from flask import Flask, render_template_string
 import parser
 import sqlite3
 
 app = Flask(__name__)
-
-# Создаём таблицу при старте
 parser.init_db()
 
 @app.route("/")
@@ -29,5 +28,8 @@ def home():
 
 @app.route("/run-parser-cron")
 def run_parser_cron():
-    parser.parse_sportsdirect()
-    return "✅ Парсер запущен по cron!"
+    def run_in_background():
+        parser.parse_sportsdirect()
+
+    threading.Thread(target=run_in_background).start()
+    return "✅ Парсер запущен в фоне!"
