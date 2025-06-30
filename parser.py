@@ -34,17 +34,17 @@ def parse_sportsdirect():
     url = "https://www.sportsdirect.com/lonsdale-shorts-and-vest-set-kids-290167"
     driver.get(url)
 
-    wait = WebDriverWait(driver, 15)
+    wait = WebDriverWait(driver, 30)
 
-    # Название
+    # Ждем заголовок
     name_elem = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "h1")))
     name = name_elem.text.strip()
 
-    # Цена
+    # Ждем цену по ID
     price_elem = wait.until(EC.presence_of_element_located((By.ID, "lblSellingPrice")))
     price = price_elem.text.strip()
 
-    available = 1  # считаем, что доступно
+    available = 1  # считаем, что товар доступен
 
     driver.quit()
 
@@ -57,3 +57,7 @@ def parse_sportsdirect():
     conn.close()
 
     print(f"✅ Сохранён товар: {name}, цена: {price}")
+
+if __name__ == "__main__":
+    init_db()
+    parse_sportsdirect()
