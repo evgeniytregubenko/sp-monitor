@@ -1,8 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-import time
 import sqlite3
+import time
 
 def init_db():
     conn = sqlite3.connect('data.db')
@@ -28,39 +28,26 @@ def parse_sportsdirect():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--user-data-dir=/tmp/chrome-data")
 
-
     driver = webdriver.Chrome(options=options)
 
-    # Пример: парсим бренд Adidas (можно изменить на другую страницу)
-    driver.get("https://www.sportsdirect.com/adidas/all-adidas")
-    time.sleep(5)  # ждём загрузки JS
+    # Открываем конкретный товар (пример)
+    url = "https://www.sportsdirect.com/adidas-runfalcon-3-trainers-mens-121002#colcode=12100203"
+    driver.get(url)
+    time.sleep(5)  # ждём загрузки
 
-    products = []
-
-    # Ищем карточки товаров
-    items = driver.find_elements(By.CSS_SELECTOR, ".productgrid .item")
-
-    for item in items:
-        try:
-            name = item.find_element(By.CSS_SELECTOR, ".itemTitle").text.strip()
-            url = item.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
-            price = item.find_element(By.CSS_SELECTOR, ".pri").text.strip()
-            available = 1  # пока считаем все доступными
-            products.append({"name": name, "url": url, "price": price, "available": available})
-        except Exception as e:
-            print("⚠️ Ошибка при парсинге товара:", e)
+    name = driver.find_element(By.CSS_SELECTOR, "h1").text.strip()
+    price = driver.find_element(By.CSS_SELECTOR, ".pri").text.strip()
+    available = 1
 
     driver.quit()
 
     # Сохраняем в базу
     conn = sqlite3.connect('data.db')
     c = conn.cursor()
-
-    for p in products:
-        c.execute("INSERT INTO products (name, url, price, available) VALUES (?, ?, ?, ?)",
-                  (p["name"], p["url"], p["price"], p["available"]))
-
+    c.execute("INSERT INTO products (name, url, price, available) VALUES (?, ?, ?, ?)",
+              (name, url, price, available))
     conn.commit()
     conn.close()
 
-    print(f"✅ Сохранено {len(products)} товаров в базу")
+    print(f"✅ Сохранён товар: {name}, цена: {price}")
+
