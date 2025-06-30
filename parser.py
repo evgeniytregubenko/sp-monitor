@@ -44,4 +44,21 @@ def parse_sportsdirect():
             url = item.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
             price = item.find_element(By.CSS_SELECTOR, ".pri").text.strip()
             available = 1  # пока считаем все доступными
-            products.append({"name": name, "
+            products.append({"name": name, "url": url, "price": price, "available": available})
+        except Exception as e:
+            print("⚠️ Ошибка при парсинге товара:", e)
+
+    driver.quit()
+
+    # Сохраняем в базу
+    conn = sqlite3.connect('data.db')
+    c = conn.cursor()
+
+    for p in products:
+        c.execute("INSERT INTO products (name, url, price, available) VALUES (?, ?, ?, ?)",
+                  (p["name"], p["url"], p["price"], p["available"]))
+
+    conn.commit()
+    conn.close()
+
+    print(f"✅ Сохранено {len(products)} товаров в базу")
