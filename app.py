@@ -1,3 +1,18 @@
+from flask import Flask
+import requests
+
+app = Flask(__name__)
+
+@app.route("/test-connection")
+def test_connection():
+    try:
+        response = requests.get("https://www.sportsdirect.com/")
+        return f"Status: {response.status_code}\n\n{response.text[:500]}"
+    except Exception as e:
+        return f"Error: {e}"
+
+# Остальной твой код...
+
 import threading
 from flask import Flask, render_template_string
 import parser
