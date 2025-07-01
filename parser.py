@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import sqlite3
+import base64
 
 def init_db():
     conn = sqlite3.connect('data.db')
@@ -36,7 +37,15 @@ def parse_sportsdirect():
 
     wait = WebDriverWait(driver, 30)
 
-    driver.save_screenshot("/tmp/screen.png")  # 💥 Добавляем
+    # Сохраняем скрин для проверки
+    driver.save_screenshot("/tmp/screen.png")
+
+    # Читаем скрин и выводим base64 в логи
+    with open("/tmp/screen.png", "rb") as f:
+        b64 = base64.b64encode(f.read()).decode()
+        print("===SCREENSHOT_START===")
+        print(b64)
+        print("===SCREENSHOT_END===")
 
     # Ждем заголовок
     name_elem = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "h1")))
